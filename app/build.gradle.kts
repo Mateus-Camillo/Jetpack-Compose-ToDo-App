@@ -2,7 +2,12 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
 
+    alias(libs.plugins.jetbrainsCompose) version "1.6.10"
+    alias(libs.plugins.compose.compiler)
+
     id("com.google.gms.google-services")
+
+    id("com.google.dagger.hilt.android")
 
     id("org.jetbrains.kotlin.kapt")
 }
@@ -71,8 +76,11 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
 
     implementation(platform(libs.firebase.bom))
+
+    implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
 
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)
@@ -81,3 +89,5 @@ dependencies {
 kapt {
     correctErrorTypes = true
 }
+
+apply(plugin = "dagger.hilt.android.plugin")
