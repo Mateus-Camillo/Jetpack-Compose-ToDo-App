@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Jetpack Compose ToDo App</string>
+    <string name="title_activity_login">LoginActivity</string>
 </resources>
