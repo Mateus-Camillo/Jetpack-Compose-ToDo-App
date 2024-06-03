@@ -5,22 +5,27 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.jetpackcomposetodoapp.data.RegisterRepository
+import com.example.jetpackcomposetodoapp.data.AuthRepository
+import com.example.jetpackcomposetodoapp.di.Register
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class RegisterViewModel @Inject constructor(
-    private val registerRepository: RegisterRepository
+    @Register private val authRepository: AuthRepository
 ) : ViewModel() {
 
     private val _showMessage = MutableLiveData<Boolean>()
     val showMessage: LiveData<Boolean> get() = _showMessage
 
+    private val _registerToLogin = MutableLiveData<Boolean>()
+    val registerToLogin: LiveData<Boolean> get() = _registerToLogin
+
+
     fun registerUser(email: String, password: String) {
         viewModelScope.launch {
-            val result = registerRepository.register(email, password)
+            val result = authRepository.authenticate(email, password)
 
             if (result.isSuccess) {
                 _showMessage.value = true
@@ -29,5 +34,13 @@ class RegisterViewModel @Inject constructor(
                // TODO: Handle registration failure
             }
         }
+    }
+
+    fun registerToLogin() {
+        _registerToLogin.value = true
+    }
+
+    fun onRegisterToLoginComplete() {
+        _registerToLogin.value = false
     }
 }
