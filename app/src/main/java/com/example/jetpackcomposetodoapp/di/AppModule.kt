@@ -31,4 +31,10 @@ class AppModule {
     fun provideLoginRepository(
         firebaseAuth: FirebaseAuth
     ) : AuthRepository = LoginRepositoryImpl(firebaseAuth)
+
+    @Provides
+    @Singleton
+    fun providePasswordRegex(): Regex {
+        return Regex("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&#])[A-Za-z\\d@$!%*?&#]{8,}$")
+    }
 }
