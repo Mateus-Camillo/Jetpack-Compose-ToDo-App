@@ -68,6 +68,8 @@ fun Register(viewModel: RegisterViewModel = hiltViewModel()) {
         context.startActivity(intent)
         if (context is Activity) {
             context.finish()
+    var isPasswordValid: Boolean = viewModel.isPasswordValid(password)
+    var isPasswordVisible by remember { mutableStateOf(false) }
         }
     }
 
@@ -86,7 +88,8 @@ fun Register(viewModel: RegisterViewModel = hiltViewModel()) {
         Spacer(modifier = Modifier.height(16.dp))
         TextField(
             value = password,
-            onValueChange = { password = it },
+            onValueChange = { password = it
+                            isPasswordValid},
             label = { Text("Password") },
             modifier = Modifier.fillMaxWidth(),
 
