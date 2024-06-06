@@ -55,21 +55,31 @@ fun Register(viewModel: RegisterViewModel = hiltViewModel()) {
 
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-    var showMessage by remember { mutableStateOf(false) }
+    val isRegistrationSuccessful by viewModel.isRegistrationSuccessful.observeAsState(false)
 
     val registerToLogin by viewModel.registerToLogin.observeAsState(false)
 
-    if(registerToLogin) {
-        LaunchedEffect(Unit) {
-            viewModel.onRegisterToLoginComplete()
-        }
-        val context = LocalContext.current
-        val intent = Intent(context, LoginActivity::class.java)
-        context.startActivity(intent)
-        if (context is Activity) {
-            context.finish()
     var isPasswordValid: Boolean = viewModel.isPasswordValid(password)
     var isPasswordVisible by remember { mutableStateOf(false) }
+
+    val toastContext = LocalContext.current
+    val toastMessage by viewModel.toastMessage.observeAsState("")
+
+    val context = LocalContext.current
+
+    LaunchedEffect(toastMessage) {
+        if (toastMessage.isNotEmpty()) {
+            Toast.makeText(toastContext, toastMessage, Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    LaunchedEffect(isRegistrationSuccessful) {
+        if (isRegistrationSuccessful) {
+            val intent = Intent(context, LoginActivity::class.java)
+            context.startActivity(intent)
+            if (context is Activity) {
+                context.finish()
+            }
         }
     }
 
@@ -110,10 +120,9 @@ fun Register(viewModel: RegisterViewModel = hiltViewModel()) {
         Button(
             onClick = {
                 viewModel.registerUser(email, password)
-                showMessage = true
-
-                viewModel.registerToLogin()
             },
+            enabled = email.isNotEmpty() && password.isNotEmpty() && isPasswordValid,
+
             modifier = Modifier.fillMaxWidth()
         ) { Text("Register") }
     }
