@@ -125,7 +125,7 @@ fun Register(viewModel: RegisterViewModel = hiltViewModel()) {
 
             modifier = Modifier.fillMaxWidth()
         ) { Text("Register") }
-    }
+    } //TODO: Add text with password requirements and error message
 }
 
 @Preview(showBackground = true)
