@@ -1,6 +1,8 @@
 package com.example.jetpackcomposetodoapp.di
 
+import com.example.jetpackcomposetodoapp.data.AuthExceptionRepository
 import com.example.jetpackcomposetodoapp.data.AuthRepository
+import com.example.jetpackcomposetodoapp.repository.AuthExceptionRepositoryImpl
 import com.example.jetpackcomposetodoapp.repository.LoginRepositoryImpl
 import com.example.jetpackcomposetodoapp.repository.RegisterRepositoryImpl
 import com.google.firebase.auth.FirebaseAuth
@@ -37,4 +39,18 @@ class AppModule {
     fun providePasswordRegex(): Regex {
         return Regex("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&#])[A-Za-z\\d@$!%*?&#]{8,}$")
     }
+
+    @Register
+    @Provides
+    @Singleton
+    fun provideAuthExceptionRepository(
+        @Register registerRepository: AuthRepository,
+    ): AuthExceptionRepository = AuthExceptionRepositoryImpl(registerRepository)
+
+    @Login
+    @Provides
+    @Singleton
+    fun provideLoginAuthExceptionRepository(
+        @Login loginRepository: AuthRepository,
+    ): AuthExceptionRepository = AuthExceptionRepositoryImpl(loginRepository)
 }
