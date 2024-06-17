@@ -42,7 +42,7 @@ fun Login() {
 
 @Preview(showBackground = true)
 @Composable
-fun GreetingPreview() {
+fun LoginPreview() {
     JetpackComposeToDoAppTheme {
         Login()
     }
