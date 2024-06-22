@@ -24,19 +24,17 @@ class AppModule {
     @Singleton
     fun provideFirebaseAuth(): FirebaseAuth = FirebaseAuth.getInstance()
 
-    @Register
     @Provides
     @Singleton
     fun provideRegisterRepository(
         firebaseAuth: FirebaseAuth
-    ) : AuthRepository = RegisterRepositoryImpl(firebaseAuth)
+    ): RegisterRepository = RegisterRepositoryImpl(firebaseAuth)
 
-    @Login
     @Provides
     @Singleton
     fun provideLoginRepository(
         firebaseAuth: FirebaseAuth
-    ) : AuthRepository = LoginRepositoryImpl(firebaseAuth)
+    ): LoginRepository = LoginRepositoryImpl(firebaseAuth)
 
     @Provides
     @Singleton
@@ -60,13 +58,13 @@ class AppModule {
     @Provides
     @Singleton
     fun provideAuthExceptionRepository(
-        @Register registerRepository: AuthRepository,
+        registerRepository: RegisterRepository,
     ): AuthExceptionRepository = AuthExceptionRepositoryImpl(registerRepository)
 
     @Login
     @Provides
     @Singleton
     fun provideLoginAuthExceptionRepository(
-        @Login loginRepository: AuthRepository,
+        loginRepository: RegisterRepository,
     ): AuthExceptionRepository = AuthExceptionRepositoryImpl(loginRepository)
 }
