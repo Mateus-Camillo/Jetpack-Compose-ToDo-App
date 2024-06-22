@@ -36,9 +36,21 @@ class AppModule {
 
     @Provides
     @Singleton
+    @Named("PasswordRegex")
     fun providePasswordRegex(): Regex {
         return Regex("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&#])[A-Za-z\\d@$!%*?&#]{8,}$")
     }
+
+    @Provides
+    @Singleton
+    @Named("EmailRegex")
+    fun provideEmailRegex() : Regex {
+        return Regex("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")
+    } // TODO: Improve giant regex
+
+    @Provides
+    @Singleton
+    fun provideAuthFieldValidator() : AuthFieldValidator = AuthFieldValidatorImpl()
 
     @Register
     @Provides
