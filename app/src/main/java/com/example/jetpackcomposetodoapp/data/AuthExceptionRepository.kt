@@ -4,8 +4,7 @@ import androidx.lifecycle.MutableLiveData
 
 interface AuthExceptionRepository {
     suspend fun firebaseAuthException(
-        email: String,
-        password: String,
+        authenticationResult: Result<String>,
         isSuccessful: MutableLiveData<Boolean>,
         toastMessage: MutableLiveData<CharSequence>
     )
