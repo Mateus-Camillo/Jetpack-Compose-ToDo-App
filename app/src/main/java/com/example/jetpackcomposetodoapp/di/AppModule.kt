@@ -1,8 +1,11 @@
 package com.example.jetpackcomposetodoapp.di
 
 import com.example.jetpackcomposetodoapp.data.AuthExceptionRepository
-import com.example.jetpackcomposetodoapp.data.AuthRepository
+import com.example.jetpackcomposetodoapp.data.AuthFieldValidator
+import com.example.jetpackcomposetodoapp.data.LoginRepository
+import com.example.jetpackcomposetodoapp.data.RegisterRepository
 import com.example.jetpackcomposetodoapp.repository.AuthExceptionRepositoryImpl
+import com.example.jetpackcomposetodoapp.repository.AuthFieldValidatorImpl
 import com.example.jetpackcomposetodoapp.repository.LoginRepositoryImpl
 import com.example.jetpackcomposetodoapp.repository.RegisterRepositoryImpl
 import com.google.firebase.auth.FirebaseAuth
@@ -10,6 +13,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
