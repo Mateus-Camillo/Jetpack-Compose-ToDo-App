@@ -3,6 +3,7 @@ package com.example.jetpackcomposetodoapp.ui
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -23,12 +25,18 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -38,7 +46,7 @@ import dagger.hilt.android.AndroidEntryPoint
 
 
 @AndroidEntryPoint
-class MainActivity : ComponentActivity() {
+class RegisterActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -57,9 +65,12 @@ fun Register(viewModel: RegisterViewModel = hiltViewModel()) {
     var password by remember { mutableStateOf("") }
     val isRegistrationSuccessful by viewModel.isRegistrationSuccessful.observeAsState(false)
 
-    val registerToLogin by viewModel.registerToLogin.observeAsState(false)
+    var startLoginActivity: Boolean by remember { mutableStateOf(false) }
 
-    var isPasswordValid: Boolean = viewModel.isPasswordValid(password)
+    val areRegisterFieldsValid: Boolean = viewModel.areRegisterFieldsValid(email, password)
+
+    val areFieldsEmpty: Boolean = viewModel.areFieldsEmpty(fields = arrayOf(email, password))
+
     var isPasswordVisible by remember { mutableStateOf(false) }
 
     val toastContext = LocalContext.current
@@ -73,11 +84,11 @@ fun Register(viewModel: RegisterViewModel = hiltViewModel()) {
         }
     }
 
-    LaunchedEffect(isRegistrationSuccessful) {
-        if (isRegistrationSuccessful) {
+    LaunchedEffect(isRegistrationSuccessful || startLoginActivity) {
+        if (isRegistrationSuccessful || startLoginActivity) {
             val intent = Intent(context, LoginActivity::class.java)
             context.startActivity(intent)
-            if (context is Activity) {
+            if (context is RegisterActivity) {
                 context.finish()
             }
         }
@@ -98,8 +109,7 @@ fun Register(viewModel: RegisterViewModel = hiltViewModel()) {
         Spacer(modifier = Modifier.height(16.dp))
         TextField(
             value = password,
-            onValueChange = { password = it
-                            isPasswordValid},
+            onValueChange = { password = it },
             label = { Text("Password") },
             modifier = Modifier.fillMaxWidth(),
 
@@ -121,10 +131,25 @@ fun Register(viewModel: RegisterViewModel = hiltViewModel()) {
             onClick = {
                 viewModel.registerUser(email, password)
             },
-            enabled = email.isNotEmpty() && password.isNotEmpty() && isPasswordValid,
+            enabled = areFieldsEmpty && areRegisterFieldsValid,
 
             modifier = Modifier.fillMaxWidth()
         ) { Text("Register") }
+
+        ClickableText(text = buildAnnotatedString {
+            append("Already have an account? ")
+
+            withStyle(style = SpanStyle(color = Color.Blue)) {
+                append("Login")
+            }
+        },
+            onClick = {
+                Log.d("RegisterActivity", "startLoginActivity")
+                startLoginActivity = true
+            },
+
+            modifier = Modifier.align(Alignment.CenterHorizontally)
+        )
     } //TODO: Add text with password requirements and error message
 }
 
