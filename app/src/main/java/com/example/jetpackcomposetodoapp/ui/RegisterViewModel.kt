@@ -6,16 +6,23 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.jetpackcomposetodoapp.data.AuthExceptionRepository
-import com.example.jetpackcomposetodoapp.data.AuthRepository
+import com.example.jetpackcomposetodoapp.data.AuthFieldValidator
+import com.example.jetpackcomposetodoapp.data.RegisterRepository
 import com.example.jetpackcomposetodoapp.di.Register
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import javax.inject.Named
 
 @HiltViewModel
 class RegisterViewModel @Inject constructor(
-    private val providePasswordRegex: Regex,
-    @Register private val authExceptionRepository: AuthExceptionRepository
+    private val registerRepository: RegisterRepository,
+    @Register private val authExceptionRepository: AuthExceptionRepository,
+
+    private val authFieldValidator: AuthFieldValidator,
+
+    @Named("PasswordRegex") private val providePasswordRegex: Regex,
+    @Named("EmailRegex") private val provideEmailRegex: Regex
 ) : ViewModel() {
 
     private val _isRegistrationSuccessful = MutableLiveData<Boolean>()
@@ -34,16 +41,26 @@ class RegisterViewModel @Inject constructor(
         }
 
         viewModelScope.launch {
+
+            val registerResult = registerRepository.registerUser(email, password)
+
             authExceptionRepository.firebaseAuthException(
-                email,
-                password,
+                registerResult,
                 _isRegistrationSuccessful,
                 _toastMessage)
         }
 
     }
 
-    fun isPasswordValid(password: String): Boolean {
-        return providePasswordRegex.matches(password)
+    fun isEmailValid(email: String): Boolean {
+        return provideEmailRegex.matches(email)
+    }
+
+    fun areRegisterFieldsValid(email: String, password: String): Boolean {
+        return authFieldValidator.fieldsValidation(email, password)
+    }
+
+    fun areFieldsEmpty(vararg fields: String): Boolean {
+        return fields.all { it.isNotEmpty() }
     }
 }
