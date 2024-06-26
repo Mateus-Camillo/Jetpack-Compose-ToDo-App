@@ -1,6 +1,8 @@
 package com.example.jetpackcomposetodoapp.ui
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -12,12 +14,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.currentComposer
+import androidx.compose.runtime.currentCompositionLocalContext
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -25,6 +31,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
@@ -32,6 +39,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.jetpackcomposetodoapp.ui.ui.theme.JetpackComposeToDoAppTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -52,6 +60,20 @@ fun Login(viewModel: LoginViewModel = hiltViewModel()) {
 
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+
+    var startRegisterActivity:Boolean by remember { mutableStateOf(false) }
+
+    val context = LocalContext.current
+
+    LaunchedEffect(startRegisterActivity) {
+        if(startRegisterActivity) {
+            val intent = Intent(context, RegisterActivity::class.java)
+            context.startActivity(intent)
+            if (context is LoginActivity) {
+                context.finish()
+            }
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -77,17 +99,18 @@ fun Login(viewModel: LoginViewModel = hiltViewModel()) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        ClickableText(text = buildAnnotatedString {
-            withStyle(style = SpanStyle(color = Color.Blue)) {
-                append("Forgot Password?")
-            }
-        },
+        ClickableText(
+            text = buildAnnotatedString {
+                withStyle(style = SpanStyle(color = Color.Blue)) {
+                    append("Forgot Password?")
+                }
+            },
             onClick = {
-                      // TODO: Implement forgot password OnClick function
-                      print("Forgot Password")
+                // TODO: Implement forgot password OnClick function
+                print("Forgot Password")
             },
             modifier = Modifier.align(Alignment.End)
-            )
+        )
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -95,10 +118,21 @@ fun Login(viewModel: LoginViewModel = hiltViewModel()) {
             onClick = {
                 viewModel.loginUser(email, password)
             },
-
-
             modifier = Modifier.fillMaxWidth()
         ) { Text("Login") }
+
+        ClickableText(
+            text = buildAnnotatedString {
+                append("Don't have an account? ")
+
+                withStyle(style = SpanStyle(color = Color.Blue)) {
+                    append("Sign up")
+                }
+            },
+            onClick = { Log.d("LoginActivity", "startRegisterActivity")
+                        startRegisterActivity = true },
+            modifier = Modifier.align(Alignment.CenterHorizontally)
+        )
     }
 }
 
