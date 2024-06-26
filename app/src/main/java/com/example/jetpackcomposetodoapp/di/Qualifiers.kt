@@ -9,3 +9,11 @@ annotation class Register
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
 annotation class Login
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class EmailRegexQualifier
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class PasswordRegexQualifier
